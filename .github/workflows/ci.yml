@@ -37,6 +37,6 @@ jobs:
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: jar-\({{ matrix.os }}-\){{ github.run_number }}
+          name: jar-${{ matrix.os }}-${{ github.run_number }}
           path: target/*.jar
           if-no-files-found: error
