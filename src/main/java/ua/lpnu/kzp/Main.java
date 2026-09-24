@@ -1,8 +1,6 @@
 package ua.lpnu.kzp;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,12 +11,26 @@ public final class Main {
     }
 
     public static void main(String[] args) {
-        Path input = Path.of("data", "input.csv");
-        List <String> lines;
+        Path inputPath = Path.of("data", "input.csv");
+        Path outputPath = Path.of("out", "report.txt");
 
+        // Розбір аргументів командного рядка
+        if (args.length > 0 && "--help".equals(args[0])) {
+            System.out.println("Використання: java -jar lab01-1.0.0.jar [--input ] [--output ]");
+            return;
+        }
+        
+        for (int i = 0; i < args.length - 1; i++) {
+            if ("--input".equals(args[i])) {
+                inputPath = Path.of(args[i + 1]);
+            } else if ("--output".equals(args[i])) {
+                outputPath = Path.of(args[i + 1]);
+            }
+        }
+
+        List <String> lines;
         try {
-            // Явне кодування не залежить від налаштувань операційної системи
-            lines = Files.readAllLines(input, StandardCharsets.UTF_8);
+            lines = FileReport.readLines(inputPath);
         } catch (IOException e) {
             System.out.println("Помилка читання файлу: " + e.getMessage());
             return;
@@ -31,7 +43,6 @@ public final class Main {
         int oldestYear = Integer.MAX_VALUE;
 
         for (int index = 0; index < lines.size(); index++) {
-            // Розбиваємо рядок, зберігаючи порожні поля в кінці
             String[] fields = lines.get(index).split(";", -1);
             
             if (fields.length != 5) {
@@ -45,7 +56,6 @@ public final class Main {
             }
 
             try {
-                // Числові перетворення виконуються в блоці try
                 int minutes = Integer.parseInt(fields[2]);
                 int year = Integer.parseInt(fields[3]);
                 double rating = Double.parseDouble(fields[4]);
@@ -55,7 +65,6 @@ public final class Main {
                     continue;
                 }
 
-                // До статистики потрапляють лише коректні записи
                 validCount++;
                 totalRating += rating;
                 maxMinutes = Math.max(maxMinutes, minutes);
@@ -66,15 +75,32 @@ public final class Main {
             }
         }
 
-        // Захист від ділення на нуль, якщо жоден фільм не пройшов перевірку
         double averageRating = validCount == 0 ? 0.0 : totalRating / validCount;
 
-        System.out.printf(Locale.ROOT, "Коректних записів: %d%n", validCount);
-        System.out.printf(Locale.ROOT, "Середній рейтинг: %.2f%n", averageRating);
-        System.out.printf(Locale.ROOT, "Найдовший фільм (хв): %d%n", maxMinutes == Integer.MIN_VALUE ? 0 : maxMinutes);
-        System.out.printf(Locale.ROOT, "Найстаріший рік: %d%n", oldestYear == Integer.MAX_VALUE ? 0 : oldestYear);
-        System.out.printf(Locale.ROOT, "Помилок: %d%n", errors.size());
+        // Збираю весь звіт у єдину текстову змінну
+        StringBuilder reportBuilder = new StringBuilder();
         
-        errors.forEach(System.out::println);
+        reportBuilder.append(String.format(Locale.ROOT, "Коректних записів: %d%n", validCount));
+        reportBuilder.append(String.format(Locale.ROOT, "Середній рейтинг: %.2f%n", averageRating));
+        reportBuilder.append(String.format(Locale.ROOT, "Найдовший фільм (хв): %d%n", maxMinutes == Integer.MIN_VALUE ? 0 : maxMinutes));
+        reportBuilder.append(String.format(Locale.ROOT, "Найстаріший рік: %d%n", oldestYear == Integer.MAX_VALUE ? 0 : oldestYear));
+        reportBuilder.append(String.format(Locale.ROOT, "Помилок: %d%n", errors.size()));
+        
+        for (String error : errors) {
+            reportBuilder.append(error).append(System.lineSeparator());
+        }
+
+        String finalReport = reportBuilder.toString();
+
+        // Виводжу звіт у консоль
+        System.out.print(finalReport);
+
+        // Записую той самий звіт у файл
+        try {
+            FileReport.writeReport(outputPath, finalReport);
+            System.out.println("\n[УСПІХ] Звіт збережено у файл: " + outputPath.toString());
+        } catch (IOException e) {
+            System.out.println("\n[ПОМИЛКА] Не вдалося записати звіт у файл: " + e.getMessage());
+        }
     }
 }
