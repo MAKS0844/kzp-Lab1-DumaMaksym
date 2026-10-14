@@ -6,20 +6,31 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * Головний клас програми для аналізу каталогу фільмів.
+ * Зчитує дані з CSV-файлу, перевіряє їх та генерує звіт.
+ */
 public final class Main {
+    
     private Main() {
     }
 
+    /**
+     * Точка входу в програму.
+     * 
+     * @param args аргументи командного рядка
+     */
     public static void main(String[] args) {
         Path inputPath = Path.of("data", "input.csv");
         Path outputPath = Path.of("out", "report.txt");
 
         // Розбір аргументів командного рядка
-        if (args.length > 0 && "--help".equals(args[0])) {
-            System.out.println("Використання: java -jar lab01-1.0.0.jar [--input ] [--output ]");
-            return;
-        }
-        if ("--version".equals(args[0])) {
+        if (args.length > 0) {
+            if ("--help".equals(args[0])) {
+                System.out.printf("Використання: java -jar lab01-1.0.0.jar [--help] [--version] [--input <файл>] [--output <файл>]%n");
+                return;
+            }
+            if ("--version".equals(args[0])) {
                 System.out.printf("Версія програми: 1.0.0%n");
                 return;
             }
@@ -33,7 +44,7 @@ public final class Main {
             }
         }
 
-        List <String> lines;
+        List<String> lines;
         try {
             lines = FileReport.readLines(inputPath);
         } catch (IOException e) {
@@ -41,7 +52,7 @@ public final class Main {
             return;
         }
 
-        List <String> errors = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
         int validCount = 0;
         double totalRating = 0;
         int maxMinutes = Integer.MIN_VALUE;
