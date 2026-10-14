@@ -19,6 +19,11 @@ public final class Main {
             System.out.println("Використання: java -jar lab01-1.0.0.jar [--input ] [--output ]");
             return;
         }
+        if ("--version".equals(args[0])) {
+                System.out.printf("Версія програми: 1.0.0%n");
+                return;
+            }
+        }
         
         for (int i = 0; i < args.length - 1; i++) {
             if ("--input".equals(args[i])) {
