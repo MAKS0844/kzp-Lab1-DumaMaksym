@@ -8,23 +8,17 @@ import java.util.Locale;
 
 /**
  * Головний клас програми для аналізу каталогу фільмів.
- * Зчитує дані з CSV-файлу, перевіряє їх та генерує звіт.
+ * Відрефакторено з використанням ООП.
  */
 public final class Main {
     
     private Main() {
     }
 
-    /**
-     * Точка входу в програму.
-     * 
-     * @param args аргументи командного рядка
-     */
     public static void main(String[] args) {
         Path inputPath = Path.of("data", "input.csv");
         Path outputPath = Path.of("out", "report.txt");
 
-        // Розбір аргументів командного рядка
         if (args.length > 0) {
             if ("--help".equals(args[0])) {
                 System.out.printf("Використання: java -jar lab01-1.0.0.jar [--help] [--version] [--input <файл>] [--output <файл>]%n");
@@ -52,54 +46,43 @@ public final class Main {
             return;
         }
 
+        List<Movie> movies = new ArrayList<>();
         List<String> errors = new ArrayList<>();
-        int validCount = 0;
-        double totalRating = 0;
         int maxMinutes = Integer.MIN_VALUE;
         int oldestYear = Integer.MAX_VALUE;
+        double totalRating = 0.0;
 
         for (int index = 0; index < lines.size(); index++) {
-            String[] fields = lines.get(index).split(";", -1);
-            
-            if (fields.length != 5) {
-                errors.add("Рядок " + (index + 1) + ": очікується 5 полів");
-                continue;
-            }
-            
-            if (fields[0].isBlank() || fields[1].isBlank()) {
-                errors.add("Рядок " + (index + 1) + ": порожня назва або режисер");
-                continue;
-            }
-
             try {
-                int minutes = Integer.parseInt(fields[2]);
-                int year = Integer.parseInt(fields[3]);
-                double rating = Double.parseDouble(fields[4]);
-
-                if (minutes <= 0 || year <= 0 || rating < 0) {
-                    errors.add("Рядок " + (index + 1) + ": від'ємне або нульове числове значення");
-                    continue;
-                }
-
-                validCount++;
-                totalRating += rating;
-                maxMinutes = Math.max(maxMinutes, minutes);
-                oldestYear = Math.min(oldestYear, year);
-
-            } catch (NumberFormatException exception) {
-                errors.add("Рядок " + (index + 1) + ": числове поле має помилковий формат");
+                // Створюємо об'єкт через фабричний метод (інкапсуляція розбору та валідації)
+                Movie movie = Movie.fromCsv(lines.get(index));
+                movies.add(movie);
+                
+                totalRating += movie.getRating();
+                maxMinutes = Math.max(maxMinutes, movie.getMinutes());
+                oldestYear = Math.min(oldestYear, movie.getYear());
+            } catch (IllegalArgumentException exception) {
+                // Зберігаємо помилку разом із номером рядка на рівні циклу
+                errors.add("Рядок " + (index + 1) + ": " + exception.getMessage());
             }
         }
 
-        double averageRating = validCount == 0 ? 0.0 : totalRating / validCount;
+        double averageRating = movies.isEmpty() ? 0.0 : totalRating / movies.size();
+        
+        // Зберігаємо підсумки у незмінний record
+        MovieSummary summary = new MovieSummary(
+            movies.size(), 
+            averageRating, 
+            maxMinutes == Integer.MIN_VALUE ? 0 : maxMinutes, 
+            oldestYear == Integer.MAX_VALUE ? 0 : oldestYear
+        );
 
-        // Збираю весь звіт у єдину текстову змінну
         StringBuilder reportBuilder = new StringBuilder();
         
-        reportBuilder.append(String.format(Locale.ROOT, "Коректних записів: %d%n", validCount));
-        reportBuilder.append(String.format(Locale.ROOT, "Середній рейтинг: %.2f%n", averageRating));
-        reportBuilder.append(String.format(Locale.ROOT, "Найдовший фільм (хв): %d%n", maxMinutes == Integer.MIN_VALUE ? 0 : maxMinutes));
-        reportBuilder.append(String.format(Locale.ROOT, "Найстаріший рік: %d%n", oldestYear == Integer.MAX_VALUE ? 0 : oldestYear));
+        reportBuilder.append(String.format(Locale.ROOT, "Коректних записів: %d%n", summary.count()));
+        reportBuilder.append(String.format(Locale.ROOT, "Середній рейтинг: %.2f%n", summary.averageRating()));
+        reportBuilder.append(String.format(Locale.ROOT, "Найдовший фільм (хв): %d%n", summary.maxMinutes()));
+        reportBuilder.append(String.format(Locale.ROOT, "Найстаріший рік: %d%n", summary.oldestYear()));
         reportBuilder.append(String.format(Locale.ROOT, "Помилок: %d%n", errors.size()));
         
         for (String error : errors) {
@@ -107,11 +90,8 @@ public final class Main {
         }
 
         String finalReport = reportBuilder.toString();
-
-        // Виводжу звіт у консоль
         System.out.print(finalReport);
 
-        // Записую той самий звіт у файл
         try {
             FileReport.writeReport(outputPath, finalReport);
             System.out.println("\n[УСПІХ] Звіт збережено у файл: " + outputPath.toString());
