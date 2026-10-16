@@ -21,11 +21,11 @@ public final class Main {
 
         if (args.length > 0) {
             if ("--help".equals(args[0])) {
-                System.out.printf("Використання: java -jar lab01-1.0.0.jar [--help] [--version] [--input <файл>] [--output <файл>]%n");
+                System.out.printf("Використання: java -jar lab01-1.1.0.jar [--help] [--version] [--input <файл>] [--output <файл>]%n");
                 return;
             }
             if ("--version".equals(args[0])) {
-                System.out.printf("Версія програми: 1.0.0%n");
+                System.out.printf("Версія програми: 1.1.0%n");
                 return;
             }
         }
