@@ -6,13 +6,19 @@ import org.junit.jupiter.api.Test;
 
 class MainTest {
 
-    /* === ТЕСТИ З ЛАБОРАТОРНОЇ №1 (Адаптовані під ООП) === */
+    /* === ТЕСТИ З ЛАБОРАТОРНОЇ №1 (Адаптовані під ООП та Builder) === */
     
     @Test
     void movieCreationStoresDataCorrectly() {
-        Movie movie = new Movie("Тіні забутих предків", "Сергій Параджанов", 97, 1964, 8.1);
+        // Тепер використовуємо Builder замість прямого виклику конструктора
+        Movie movie = new Movie.Builder()
+                .title("Тіні забутих предків")
+                .director("Сергій Параджанов")
+                .minutes(97)
+                .year(1964)
+                .rating(8.1)
+                .build();
 
-        // Тепер використовуємо геттери замість прямого доступу до приватних полів
         assertEquals("Тіні забутих предків", movie.getTitle());
         assertEquals("Сергій Параджанов", movie.getDirector());
         assertEquals(97, movie.getMinutes());
@@ -44,8 +50,15 @@ class MainTest {
 
     @Test
     void constructorRejectsNegativeMinutes() {
+        // Перевіряємо, що Builder не дозволяє обійти валідацію і падає з помилкою
         assertThrows(IllegalArgumentException.class, 
-            () -> new Movie("Матриця", "Вачовскі", -10, 1999, 8.7));
+            () -> new Movie.Builder()
+                    .title("Матриця")
+                    .director("Вачовскі")
+                    .minutes(-10)
+                    .year(1999)
+                    .rating(8.7)
+                    .build());
     }
 
     @Test
