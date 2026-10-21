@@ -3,7 +3,7 @@
 
     <groupId>ua.lpnu.kzp</groupId>
     <artifactId>lab01</artifactId>
-    <version>1.1.0</version>
+    <version>1.2.0</version>
 
     <properties>
         <maven.compiler.release>21</maven.compiler.release>
@@ -62,6 +62,12 @@
                </executions>
            </plugin>
         </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
     </build>
 </project>
 
