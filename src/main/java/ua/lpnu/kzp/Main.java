@@ -25,7 +25,7 @@ public final class Main {
                 return;
             }
             if ("--version".equals(args[0])) {
-                System.out.printf("Версія програми: 1.1.0%n");
+                System.out.printf("Версія програми: %s%n", VersionProvider.getVersion());
                 return;
             }
         }
