@@ -57,4 +57,15 @@ public abstract class Movie {
     public final int hashCode() {
         return Objects.hash(getClass(), title, releaseYear);
     }
+
+    /**
+     * Захист від Finalizer-атак при викиданні винятків у конструкторі.
+     * Вирішує попередження SpotBugs CT_CONSTRUCTOR_THROW.
+     */
+    @Override
+    @SuppressWarnings({"deprecation", "removal"})
+    protected final void finalize() {
+        // Порожній метод
+    }
+
 }
