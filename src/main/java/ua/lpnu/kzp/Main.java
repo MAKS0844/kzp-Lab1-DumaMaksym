@@ -8,6 +8,7 @@ public final class Main {
 
     public static void main(String[] args) {
         try {
+
             // 1. Делегуємо парсинг аргументів
             ArgumentParser arguments = ArgumentParser.parse(args);
 
