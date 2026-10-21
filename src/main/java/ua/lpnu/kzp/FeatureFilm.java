@@ -6,7 +6,7 @@ public final class FeatureFilm extends Movie {
 
     public FeatureFilm(String title, int releaseYear, double boxOffice) {
         // 1. Спочатку передаємо спільні дані в базовий клас
-        super(title, releaseYear);
+        super(title, releaseYear, MovieKind.FEATURE);
         
         // 2. Потім перевіряємо власне специфічне поле
         if (boxOffice < 0) {

@@ -5,7 +5,7 @@ public final class Documentary extends Movie {
     private final int historicalAccuracy;
 
     public Documentary(String title, int releaseYear, int historicalAccuracy) {
-        super(title, releaseYear);
+        super(title, releaseYear, MovieKind.DOCUMENTARY);
         
         if (historicalAccuracy < 1 || historicalAccuracy > 10) {
             throw new IllegalArgumentException("Історична достовірність має бути від 1 до 10");
