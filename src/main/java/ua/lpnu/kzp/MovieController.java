@@ -28,16 +28,19 @@ public final class MovieController {
             }
 
             try {
-                // Беремо назву (індекс 0) і рік (індекс 3)
+                // Зчитуємо всі 5 колонок згідно з форматом CSV
                 String title = parts[0].trim();
+                String director = parts[1].trim();
+                int duration = Integer.parseInt(parts[2].trim());
                 int year = Integer.parseInt(parts[3].trim()); 
-                
+                double rating = Double.parseDouble(parts[4].trim());
 
                 Movie movie;
+                // Розподіляємо на конкретні типи фільмів
                 if (year >= 2000) {
-                    movie = new FeatureFilm(title, year, 50_000_000.0);
+                    movie = new FeatureFilm(title, year, director, duration, rating, 50_000_000.0);
                 } else {
-                    movie = new Documentary(title, year, 8);
+                    movie = new Documentary(title, year, director, duration, rating, 8);
                 }
                 movies.add(movie);
                 

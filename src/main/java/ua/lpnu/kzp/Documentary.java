@@ -1,11 +1,12 @@
 package ua.lpnu.kzp;
 
-/** Документальний фільм. */
 public final class Documentary extends Movie {
+    // Унікальне поле для документального фільму
     private final int historicalAccuracy;
 
-    public Documentary(String title, int releaseYear, int historicalAccuracy) {
-        super(title, releaseYear, MovieKind.DOCUMENTARY);
+    public Documentary(String title, int releaseYear, String director, int duration, double rating, int historicalAccuracy) {
+        // Виклик конструктора Movie
+        super(title, releaseYear, MovieKind.DOCUMENTARY, director, duration, rating);
         
         if (historicalAccuracy < 1 || historicalAccuracy > 10) {
             throw new IllegalArgumentException("Історична достовірність має бути від 1 до 10");
@@ -17,10 +18,9 @@ public final class Documentary extends Movie {
         return historicalAccuracy;
     }
 
-    /** Реалізація поліморфного методу для документального фільму. */
     @Override
     public double calculateRecommendationScore() {
-        // Для документального фільму бал базується на його достовірності
+        // Бал для документалок розраховується на основі точності
         return historicalAccuracy * 0.9;
     }
 }
