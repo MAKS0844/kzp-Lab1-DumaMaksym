@@ -1,14 +1,13 @@
 package ua.lpnu.kzp;
 
-/** Художній фільм. */
 public final class FeatureFilm extends Movie {
+    // Унікальне поле для художнього фільму
     private final double boxOffice;
 
-    public FeatureFilm(String title, int releaseYear, double boxOffice) {
-        // 1. Спочатку передаємо спільні дані в базовий клас
-        super(title, releaseYear, MovieKind.FEATURE);
+    public FeatureFilm(String title, int releaseYear, String director, int duration, double rating, double boxOffice) {
+        // Передаємо спільні параметри в батьківський клас
+        super(title, releaseYear, MovieKind.FEATURE, director, duration, rating);
         
-        // 2. Потім перевіряємо власне специфічне поле
         if (boxOffice < 0) {
             throw new IllegalArgumentException("Касові збори не можуть бути від'ємними");
         }
@@ -19,10 +18,9 @@ public final class FeatureFilm extends Movie {
         return boxOffice;
     }
 
-    /** Реалізація поліморфного методу для художнього фільму. */
     @Override
     public double calculateRecommendationScore() {
-        // Наприклад, для художнього фільму бал залежить від року випуску та касових зборів
+        // Бал для художніх фільмів залежить від року та зборів
         double baseScore = (getReleaseYear() > 2000) ? 7.0 : 8.0;
         return baseScore + (boxOffice / 100_000_000.0);
     }

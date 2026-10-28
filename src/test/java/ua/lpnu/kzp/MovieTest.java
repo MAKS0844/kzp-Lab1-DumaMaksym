@@ -7,38 +7,41 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class MovieTest {
 
-    /* Перевіряє різну поведінку підтипів (поліморфізм). */
     @Test
     void subtypesHaveDifferentBehavior() {
-        Movie feature = new FeatureFilm("Аватар", 2009, 2_000_000_000.0);
-        Movie doc = new Documentary("Планета Земля", 2006, 10);
+        // Додано: режисер ("Параджанов"), тривалість (97), рейтинг (8.1)
+        Movie feature = new FeatureFilm("Тіні забутих предків", 1964, "Параджанов", 97, 8.1, 50_000_000.0);
+        Movie doc = new Documentary("Чорнобиль", 2019, "Крейг Мейзін", 330, 9.4, 9);
         
-        // Переконуємося, що поліморфний метод видає різні результати
-        assertNotEquals(feature.calculateRecommendationScore(), doc.calculateRecommendationScore());
+        assertNotEquals(feature.calculateRecommendationScore(), doc.calculateRecommendationScore(),
+                "Поліморфний метод має давати різний результат для різних підтипів");
     }
 
-    /* Перевіряє відсутність дублювання логічно рівних об'єктів у множині. */
     @Test
     void equalObjectsHaveOneSetEntry() {
         Set<Movie> movies = new HashSet<>();
-        movies.add(new FeatureFilm("Дюна", 2021, 400_000_000.0));
-        movies.add(new FeatureFilm("Дюна", 2021, 400_000_000.0)); // Дублікат
         
+        // Створюємо два об'єкти з однаковою назвою і роком
+        Movie m1 = new FeatureFilm("Аватар", 2009, "Кемерон", 162, 7.9, 100_000.0);
+        Movie m2 = new FeatureFilm("Аватар", 2009, "Кемерон", 162, 7.9, 100_000.0);
         
-        assertEquals(1, movies.size());
+        movies.add(m1);
+        movies.add(m2);
+        
+        assertEquals(1, movies.size(), "HashSet не повинен дублювати логічно рівні об'єкти");
     }
 
-    /* Перевіряє відхилення неприпустимого спільного стану в базовому класі. */
     @Test
-    void baseClassRejectsInvalidState() {
-        assertThrows(IllegalArgumentException.class, 
-            () -> new FeatureFilm("", 2020, 1000.0));
+    void rejectsInvalidSpecificValueForFeatureFilm() {
+        assertThrows(IllegalArgumentException.class,
+                () -> new FeatureFilm("Тіні", 1964, "Параджанов", 97, 8.1, -100.0),
+                "Має викидати виняток при від'ємних касових зборах");
     }
-    
-    /* Перевіряє відхилення специфічного значення у підтипі. */
+
     @Test
-    void subtypeRejectsInvalidSpecificValue() {
-        assertThrows(IllegalArgumentException.class, 
-            () -> new Documentary("Історія", 2020, 15)); // Достовірність > 10
+    void rejectsInvalidSpecificValueForDocumentary() {
+        assertThrows(IllegalArgumentException.class,
+                () -> new Documentary("Док", 2020, "Режисер", 100, 7.0, 15),
+                "Має викидати виняток при історичній достовірності більше 10");
     }
 }
