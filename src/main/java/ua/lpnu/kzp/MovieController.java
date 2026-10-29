@@ -75,12 +75,12 @@ public final class MovieController {
 
         System.out.println("\n3. Середній рейтинг за режисером:");
         MovieReport.getAverageRatingByDirector(movies).forEach((director, rating) -> 
-            System.out.printf(Locale.ROOT, " - %s: %.2f\n", director, rating));
+    System.out.printf(Locale.ROOT, " - %s: %.2f%n", director, rating));
 
         System.out.println("\n4. Статистика тривалості:");
         IntSummaryStatistics stats = MovieReport.getDurationStatistics(movies);
-        System.out.printf(Locale.ROOT, " - Найкоротший: %d хв | Найдовший: %d хв | Середня: %.1f хв\n", 
-            stats.getMin(), stats.getMax(), stats.getAverage());
+        System.out.printf(Locale.ROOT, " - Найкоротший: %d хв | Найдовший: %d хв | Середня: %.1f хв%n", 
+    stats.getMin(), stats.getMax(), stats.getAverage());
 
         System.out.println("\n5. Пошук фільму 'Довбуш':");
         MovieReport.findByTitle(movies, "Довбуш")
