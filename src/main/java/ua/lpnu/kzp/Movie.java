@@ -52,7 +52,7 @@ public abstract class Movie {
     public MovieKind getKind() { return kind; }
     public String getDirector() { return director; }
     public int getDuration() { return duration; }
-    public double getRating() { return rating; }
+    public double getRating() { return  (rating <0 ? -1* rating:rating); }
 
     // Поліморфний метод для розрахунку рекомендаційного бала
     public abstract double calculateRecommendationScore();
