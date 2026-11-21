@@ -2,6 +2,41 @@
 
 from __future__ import annotations
 
+from typing import Protocol
+
+
+class Recommendable(Protocol):
+    """Протокол об'єктів, які мають базові поля каталогу та бал рекомендації."""
+
+    @property
+    def title(self) -> str:
+        """Повертає назву фільму."""
+        ...
+
+    @property
+    def director(self) -> str:
+        """Повертає режисера фільму."""
+        ...
+
+    @property
+    def release_year(self) -> int:
+        """Повертає рік випуску фільму."""
+        ...
+
+    @property
+    def duration_minutes(self) -> int:
+        """Повертає тривалість фільму у хвилинах."""
+        ...
+
+    @property
+    def rating(self) -> float:
+        """Повертає оцінку фільму."""
+        ...
+
+    def recommendation_score(self) -> float:
+        """Обчислює бал рекомендації фільму."""
+        ...
+
 
 class Movie:
     """Базовий клас фільму з інкапсульованими властивостями та перевіркою інваріантів."""
@@ -84,3 +119,19 @@ class Movie:
     def recommendation_score(self) -> float:
         """Обчислює бал рекомендації фільму (перевизначається у підтипах)."""
         raise NotImplementedError("Підтипи Movie повинні реалізувати recommendation_score()")
+
+
+class FeatureFilm(Movie):
+    """Художній фільм із формулою балу рекомендації за оцінкою та тривалістю."""
+
+    def recommendation_score(self) -> float:
+        """Повертає бал рекомендації для художнього фільму."""
+        return round(self.rating * 10.0 + self.duration_minutes * 0.05, 4)
+
+
+class Documentary(Movie):
+    """Документальний фільм із формулою балу рекомендації за оцінкою та тривалістю."""
+
+    def recommendation_score(self) -> float:
+        """Повертає бал рекомендації для документального фільму."""
+        return round(self.rating * 12.0 + self.duration_minutes * 0.02, 4)
