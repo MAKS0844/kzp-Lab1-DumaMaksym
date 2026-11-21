@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from typing import Protocol
 
 
@@ -120,6 +121,35 @@ class Movie:
         """Обчислює бал рекомендації фільму (перевизначається у підтипах)."""
         raise NotImplementedError("Підтипи Movie повинні реалізувати recommendation_score()")
 
+    def __str__(self) -> str:
+        """Повертає коротке текстове подання фільму для читача."""
+        return f"{self.title} ({self.release_year}) — рейтинг {self.rating:.1f}"
+
+    def __repr__(self) -> str:
+        """Повертає діагностичне представлення об'єкта."""
+        return (
+            f"{type(self).__name__}("
+            f"title={self.title!r}, "
+            f"director={self.director!r}, "
+            f"release_year={self.release_year!r}, "
+            f"duration_minutes={self.duration_minutes!r}, "
+            f"rating={self.rating!r})"
+        )
+
+    def __eq__(self, other: object) -> bool:
+        """Порівнює два об'єкти одного типу за атрибутами фільму."""
+        if not isinstance(other, Movie):
+            return NotImplemented
+        if type(self) is not type(other):
+            return False
+        return (
+            self.title == other.title
+            and self.director == other.director
+            and self.release_year == other.release_year
+            and self.duration_minutes == other.duration_minutes
+            and self.rating == other.rating
+        )
+
 
 class FeatureFilm(Movie):
     """Художній фільм із формулою балу рекомендації за оцінкою та тривалістю."""
@@ -135,3 +165,19 @@ class Documentary(Movie):
     def recommendation_score(self) -> float:
         """Повертає бал рекомендації для документального фільму."""
         return round(self.rating * 12.0 + self.duration_minutes * 0.02, 4)
+
+
+@dataclass(frozen=True)
+class CatalogSummary:
+    """Незмінний підсумок аналізу каталогу фільмів."""
+
+    total_count: int
+    selected_count: int
+    minimum_rating: float
+    selected_titles: tuple[str, ...]
+    directors: frozenset[str]
+    count_by_director: dict[str, int]
+    average_rating: float
+    longest_movie: Movie | None
+    top_scored_movie: Movie | None
+    extra_metrics: dict[str, float]
