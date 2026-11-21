@@ -3,9 +3,10 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Protocol
+from typing import Protocol, runtime_checkable
 
 
+@runtime_checkable
 class Recommendable(Protocol):
     """Протокол об'єктів, які мають базові поля каталогу та бал рекомендації."""
 
