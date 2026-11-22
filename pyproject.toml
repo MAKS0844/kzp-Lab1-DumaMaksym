@@ -3,10 +3,11 @@ requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "kzp-movie-report"
-version = "0.1.0"
-description = "CSV movie catalog report for KZP Lab 06"
+name = "kzp-oop-report"
+version = "0.2.0"
+description = "Object-oriented Python data report for movie catalog (Variant 8)"
 requires-python = ">=3.11"
+dependencies = []
 
 [project.optional-dependencies]
 dev = [
@@ -16,7 +17,7 @@ dev = [
 ]
 
 [project.scripts]
-kzp-lab06 = "kzp_lab06.cli:main"
+kzp-oop-report = "kzp_lab07.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
@@ -27,7 +28,7 @@ pythonpath = ["src"]
 
 [tool.ruff]
 line-length = 100
-exclude = ["build", "dist", ".venv", ".venv-*"]
+exclude = ["build", "dist", ".venv", ".venv-*", "__pycache__"]
 
 [tool.ruff.lint]
-select = ["E", "F", "W", "B", "UP"]
+select = ["E", "F", "W", "B", "UP", "I"]
